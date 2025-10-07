@@ -20,6 +20,7 @@ activate-global-python-argcomplete
 - **case** - Convert text case formats (camelCase, snake_case, kebab-case, etc.)
 - **completion** - Generate shell autocompletion scripts
 - **convert** - Convert between formats (colors, numbers, files, configs, documents, text, tabular)
+- **encode** - Encode/decode text (URL, HTML, base64, hex, morse, binary, ROT13, and more)
 - **hash** - Cryptographic hash digests (MD5, SHA1, SHA224, SHA256, SHA384, SHA512)
 - **lorem** - Generate Lorem Ipsum text
 - **random** - Generate random data (integers, floats, strings, etc.)
@@ -46,16 +47,19 @@ util case sentence "HELLO WORLD"        # Hello world
 
 # Convert formats
 util convert color "#ff0000" rgb        # rgb(255, 0, 0)
-util convert color "0xFF5733" hsl       # hsl(10, 100%, 60%)
 util convert base dec 255 bin           # 11111111
-util convert base hex ff dec            # 255
 util convert data 1048576 auto          # 1.00 MB
-util convert time unix 1699564800 iso   # ISO timestamp
 util convert config package.json yaml   # Output YAML
 util convert file image.png image.jpg   # Convert images
-util convert document README.md README.pdf  # Markdown to PDF
-util convert text url-encode "hello world"  # hello%20world
 util convert tabular data.csv json      # CSV to JSON
+
+# Encode/decode text
+util encode url encode "hello world"    # hello%20world
+util encode base64 encode "Hello!"      # SGVsbG8h
+util encode hex encode "test"           # 74657374
+util encode morse encode "SOS"          # ... --- ...
+util encode rot13 "Hello"               # Uryyb
+util encode hexdump "data"              # Hex dump view
 
 # Generate hashes
 util hash sha256 "password123"
@@ -148,6 +152,15 @@ SQL_SAFE=$(util convert text escape "User's input" --target sql)
 util convert tabular users.csv json | jq '.[] | select(.age > 30)'
 util convert tabular api_data.json markdown > report.md
 
+# Encode data in scripts
+ENCODED_DATA=$(util encode base64 encode "sensitive data")
+URL_PARAM=$(util encode url encode "user input")
+echo "Morse: $(util encode morse encode "HELP")"
+
+# Decode operations
+util encode base64 decode "$ENCODED_DATA"
+util encode url decode "$URL_PARAM"
+
 # Create test data
 for i in {1..10}; do
   echo "$(util uuid),$(util lorem words --count 2),$(util random int --min 18 --max 80)"
@@ -194,13 +207,14 @@ cliutils/
 │       │   ├── tabular.py   # Tabular data conversions (CSV/JSON/Markdown)
 │       │   ├── text.py      # Text encoding/escaping conversions
 │       │   └── time.py      # Time format conversions
+│       ├── encode.py
 │       ├── hash.py
 │       ├── lorem.py
 │       ├── random.py
 │       ├── token.py
 │       ├── uuid.py
 │       └── validate.py
-└── tests/                   # Test suite (349 tests)
+└── tests/                   # Test suite (386 tests)
 ```
 
 ## Requirements

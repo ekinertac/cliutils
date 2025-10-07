@@ -25,7 +25,7 @@ util/commands/encode.py
 - HTML entity encoding/decoding
 - Unicode escape sequences
 - Hex dump/undump
-- ROT13, Caesar cipher
+
 - Morse code
 
 ### 3. **Network Utilities**
