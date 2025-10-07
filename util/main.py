@@ -1,7 +1,9 @@
+# PYTHON_ARGCOMPLETE_OK
 import argparse
 import importlib
 import pkgutil
 import sys
+import argcomplete
 
 import util.commands
 
@@ -15,6 +17,7 @@ def main():
         if hasattr(module, 'setup_parser'):
             module.setup_parser(subparsers)
 
+    argcomplete.autocomplete(parser) # This line enables autocompletion
     args = parser.parse_args()
 
     if hasattr(args, 'func'):
