@@ -9,6 +9,7 @@ setup(
         "lorem-text",
         "Pillow",
         "PyYAML",
+        "qrcode[pil]",
         "tomli",
         "tomli-w",
         "xmltodict",

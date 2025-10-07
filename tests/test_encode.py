@@ -351,3 +351,40 @@ def test_encode_no_arguments():
     result = run_util_command(["encode"])
     assert result.returncode != 0
     assert "required" in result.stderr.lower() or "error" in result.stderr.lower()
+
+
+# ============================================================================
+# QR CODE TESTS
+# ============================================================================
+
+
+def test_encode_qr_basic():
+    """Test QR code generation."""
+    result = run_util_command(["encode", "qr", "test"])
+    assert result.returncode == 0
+    # Check for QR code ASCII art (blocks)
+    assert "█" in result.stdout or "▄" in result.stdout or "▀" in result.stdout
+
+
+def test_encode_qr_url():
+    """Test QR code with URL."""
+    result = run_util_command(["encode", "qr", "https://example.com"])
+    assert result.returncode == 0
+    assert "█" in result.stdout or "▄" in result.stdout or "▀" in result.stdout
+
+
+def test_encode_qr_invert():
+    """Test QR code with inverted colors."""
+    result = run_util_command(["encode", "qr", "test", "--invert"])
+    assert result.returncode == 0
+    # Inverted should have different characters
+    assert "█" in result.stdout or "▄" in result.stdout or "▀" in result.stdout
+
+
+def test_encode_qr_long_text():
+    """Test QR code with longer text."""
+    result = run_util_command(
+        ["encode", "qr", "This is a longer text that should still work"]
+    )
+    assert result.returncode == 0
+    assert "█" in result.stdout or "▄" in result.stdout or "▀" in result.stdout

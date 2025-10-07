@@ -20,7 +20,7 @@ activate-global-python-argcomplete
 - **case** - Convert text case formats (camelCase, snake_case, kebab-case, etc.)
 - **completion** - Generate shell autocompletion scripts
 - **convert** - Convert between formats (colors, numbers, files, configs, documents, text, tabular)
-- **encode** - Encode/decode text (URL, HTML, base64, hex, morse, binary, ROT13, and more)
+- **encode** - Encode/decode text (URL, HTML, base64, hex, morse, QR codes, binary, ROT13, and more)
 - **hash** - Cryptographic hash digests (MD5, SHA1, SHA224, SHA256, SHA384, SHA512)
 - **lorem** - Generate Lorem Ipsum text
 - **random** - Generate random data (integers, floats, strings, etc.)
@@ -59,7 +59,7 @@ util encode base64 encode "Hello!"      # SGVsbG8h
 util encode hex encode "test"           # 74657374
 util encode morse encode "SOS"          # ... --- ...
 util encode rot13 "Hello"               # Uryyb
-util encode hexdump "data"              # Hex dump view
+util encode qr "https://example.com"    # QR code in terminal!
 
 # Generate hashes
 util hash sha256 "password123"
@@ -156,6 +156,7 @@ util convert tabular api_data.json markdown > report.md
 ENCODED_DATA=$(util encode base64 encode "sensitive data")
 URL_PARAM=$(util encode url encode "user input")
 echo "Morse: $(util encode morse encode "HELP")"
+util encode qr "https://yourapp.com/share/$(util token hex 16)"  # QR code with unique URL
 
 # Decode operations
 util encode base64 decode "$ENCODED_DATA"
@@ -214,7 +215,7 @@ cliutils/
 │       ├── token.py
 │       ├── uuid.py
 │       └── validate.py
-└── tests/                   # Test suite (386 tests)
+└── tests/                   # Test suite (389 tests)
 ```
 
 ## Requirements
@@ -226,6 +227,7 @@ cliutils/
 - lorem-text - Lorem Ipsum generation
 - Pillow - Image conversions
 - PyYAML, tomli, tomli-w, xmltodict - Config file conversions
+- qrcode[pil] - QR code generation
 
 ### Optional Dependencies (for advanced features)
 

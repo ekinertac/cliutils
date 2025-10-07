@@ -3,6 +3,13 @@ import html
 import sys
 import urllib.parse
 
+try:
+    import qrcode
+
+    QRCODE_AVAILABLE = True
+except ImportError:
+    QRCODE_AVAILABLE = False
+
 
 def encode_url(text: str) -> str:
     """URL encode text."""
@@ -298,6 +305,32 @@ def handle_morse_command(args):
         sys.exit(1)
 
 
+def handle_qr_command(args):
+    """Handle QR code generation."""
+    if not QRCODE_AVAILABLE:
+        print("Error: qrcode module not installed.", file=sys.stderr)
+        print("Install with: pip install qrcode[pil]", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        # Create QR code instance
+        qr = qrcode.QRCode(
+            version=1,  # Auto size
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=1,
+            border=1,
+        )
+        qr.add_data(args.text)
+        qr.make(fit=True)
+
+        # Print QR code to terminal using ASCII
+        qr.print_ascii(invert=args.invert)
+
+    except Exception as e:
+        print(f"Error generating QR code: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def setup_parser(subparsers):
     """Setup the encode parser."""
     encode_parser = subparsers.add_parser(
@@ -401,3 +434,13 @@ def setup_parser(subparsers):
     )
     morse_parser.add_argument("text", help="Text to encode/decode")
     morse_parser.set_defaults(func=handle_morse_command)
+
+    # QR code
+    qr_parser = encode_subparsers.add_parser(
+        "qr", help="Generate QR code (ASCII art in terminal)"
+    )
+    qr_parser.add_argument("text", help="Text or URL to encode as QR code")
+    qr_parser.add_argument(
+        "--invert", action="store_true", help="Invert colors (white on black)"
+    )
+    qr_parser.set_defaults(func=handle_qr_command)
