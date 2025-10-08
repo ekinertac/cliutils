@@ -2,6 +2,8 @@ import random
 import re
 import sys
 
+from .case_data import LEET_MAP, UPSIDE_DOWN_MAP, ZALGO_DOWN, ZALGO_MID, ZALGO_UP
+
 
 def to_lower(text):
     """Convert text to lowercase."""
@@ -87,6 +89,49 @@ def to_sentence(text):
     return text[0].upper() + text[1:].lower()
 
 
+def to_leet(text):
+    """Convert text to 1337 speak."""
+    return "".join(LEET_MAP.get(char, char) for char in text)
+
+
+def to_upside_down(text):
+    """Convert text to upside down using Unicode characters."""
+    # Reverse and flip each character
+    return "".join(UPSIDE_DOWN_MAP.get(char, char) for char in reversed(text))
+
+
+def to_reverse(text):
+    """Reverse the text."""
+    return text[::-1]
+
+
+def to_zalgo(text):
+    """Convert text to Zalgo (glitch) text."""
+    result = []
+    for char in text:
+        result.append(char)
+        # Add random combining marks (2-4 marks per character)
+        num_marks = random.randint(2, 4)
+        for _ in range(num_marks):
+            mark_list = random.choice([ZALGO_UP, ZALGO_DOWN, ZALGO_MID])
+            result.append(random.choice(mark_list))
+
+    return "".join(result)
+
+
+def to_mock(text):
+    """Convert text to mocking SpongeBob case (alternating upper/lower)."""
+    result = []
+    upper = False
+    for char in text:
+        if char.isalpha():
+            result.append(char.upper() if upper else char.lower())
+            upper = not upper
+        else:
+            result.append(char)
+    return "".join(result)
+
+
 def case_command(args):
     """Convert text case formats."""
     case_type = args.case_type
@@ -113,6 +158,16 @@ def case_command(args):
             result = to_title(text)
         elif case_type == "sentence":
             result = to_sentence(text)
+        elif case_type == "leet":
+            result = to_leet(text)
+        elif case_type == "upside-down":
+            result = to_upside_down(text)
+        elif case_type == "reverse":
+            result = to_reverse(text)
+        elif case_type == "zalgo":
+            result = to_zalgo(text)
+        elif case_type == "mock":
+            result = to_mock(text)
         else:
             print(f"Error: Unsupported case type '{case_type}'", file=sys.stderr)
             sys.exit(1)
@@ -221,3 +276,48 @@ def setup_parser(subparsers):
     )
     sentence_parser.add_argument("text", type=str, help="Text to convert")
     sentence_parser.set_defaults(func=case_command)
+
+    # Leet speak subcommand
+    leet_parser = case_subparsers.add_parser(
+        "leet",
+        help="Convert to 1337 speak",
+        description="Convert text to 1337 (leet) speak.",
+    )
+    leet_parser.add_argument("text", type=str, help="Text to convert")
+    leet_parser.set_defaults(func=case_command)
+
+    # Upside-down subcommand
+    upside_down_parser = case_subparsers.add_parser(
+        "upside-down",
+        help="Convert to upside-down text",
+        description="Convert text to upside-down using Unicode characters.",
+    )
+    upside_down_parser.add_argument("text", type=str, help="Text to convert")
+    upside_down_parser.set_defaults(func=case_command)
+
+    # Reverse subcommand
+    reverse_parser = case_subparsers.add_parser(
+        "reverse",
+        help="Reverse the text",
+        description="Reverse the text.",
+    )
+    reverse_parser.add_argument("text", type=str, help="Text to reverse")
+    reverse_parser.set_defaults(func=case_command)
+
+    # Zalgo subcommand
+    zalgo_parser = case_subparsers.add_parser(
+        "zalgo",
+        help="Convert to Zalgo (glitch) text",
+        description="Convert text to Zalgo (creepy glitch) text.",
+    )
+    zalgo_parser.add_argument("text", type=str, help="Text to convert")
+    zalgo_parser.set_defaults(func=case_command)
+
+    # Mock (SpongeBob) subcommand
+    mock_parser = case_subparsers.add_parser(
+        "mock",
+        help="Convert to mocking SpongeBob case",
+        description="Convert text to alternating case (mocking SpongeBob meme).",
+    )
+    mock_parser.add_argument("text", type=str, help="Text to convert")
+    mock_parser.set_defaults(func=case_command)

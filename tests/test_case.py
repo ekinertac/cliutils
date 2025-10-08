@@ -226,3 +226,123 @@ def test_case_snake_help():
     result = run_util_command(["case", "snake", "--help"])
     assert result.returncode == 0
     assert "snake" in result.stdout.lower()
+
+
+# ============================================================================
+# FUN TEXT TRANSFORMATIONS
+# ============================================================================
+
+
+def test_case_leet():
+    result = run_util_command(["case", "leet", "hello world"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # Check key transformations: h->h, e->3, l->1, o->0
+    assert "h" in output or "H" in output
+    assert "3" in output  # e -> 3
+    assert "1" in output  # l -> 1
+    assert "0" in output  # o -> 0
+
+
+def test_case_leet_with_numbers():
+    result = run_util_command(["case", "leet", "test 123"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert "7" in output  # t -> 7
+    assert "3" in output  # e -> 3
+    assert "5" in output  # s -> 5
+
+
+def test_case_upside_down():
+    result = run_util_command(["case", "upside-down", "hello"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # Check that it's different from original and reversed
+    assert output != "hello"
+    assert len(output) == 5
+
+
+def test_case_upside_down_with_spaces():
+    result = run_util_command(["case", "upside-down", "hello world"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert " " in output  # Spaces should be preserved
+    assert output != "hello world"
+
+
+def test_case_reverse():
+    result = run_util_command(["case", "reverse", "hello"])
+    assert result.returncode == 0
+    assert result.stdout.strip() == "olleh"
+
+
+def test_case_reverse_with_spaces():
+    result = run_util_command(["case", "reverse", "hello world"])
+    assert result.returncode == 0
+    assert result.stdout.strip() == "dlrow olleh"
+
+
+def test_case_reverse_palindrome():
+    result = run_util_command(["case", "reverse", "racecar"])
+    assert result.returncode == 0
+    assert result.stdout.strip() == "racecar"
+
+
+def test_case_zalgo():
+    result = run_util_command(["case", "zalgo", "hello"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # Zalgo text should be longer due to combining marks
+    assert len(output) > 5
+    # Should contain the original characters
+    assert "h" in output
+    assert "e" in output
+    assert "l" in output
+    assert "o" in output
+
+
+def test_case_zalgo_short():
+    result = run_util_command(["case", "zalgo", "hi"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert len(output) > 2
+    assert "h" in output
+    assert "i" in output
+
+
+def test_case_mock():
+    result = run_util_command(["case", "mock", "hello world"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # Should have alternating case
+    assert output != "hello world"
+    assert output != "HELLO WORLD"
+    # Check for mix of upper and lower
+    assert any(c.isupper() for c in output)
+    assert any(c.islower() for c in output)
+
+
+def test_case_mock_pattern():
+    result = run_util_command(["case", "mock", "test"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # t(lower) e(upper) s(lower) t(upper) = tEsT
+    assert output == "tEsT"
+
+
+def test_case_mock_with_spaces():
+    result = run_util_command(["case", "mock", "a b c"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # a(lower) b(upper) c(lower) = a B c
+    assert output == "a B c"
+
+
+def test_case_mock_with_numbers():
+    result = run_util_command(["case", "mock", "hello123"])
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    # Numbers should be preserved, only letters alternate
+    assert "123" in output
+    assert any(c.isupper() for c in output if c.isalpha())
+    assert any(c.islower() for c in output if c.isalpha())

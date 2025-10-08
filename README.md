@@ -45,6 +45,13 @@ util case header "hello world"          # Hello-World
 util case title "hello world"           # Hello World
 util case sentence "HELLO WORLD"        # Hello world
 
+# Fun text transformations
+util case leet "hello world"            # h3110 w0r1d
+util case upside-down "hello"           # oʃʃǝɥ
+util case reverse "hello"               # olleh
+util case zalgo "hello"                 # h̷e̴l̶l̴o̷ (glitch text)
+util case mock "hello world"            # hElLo WoRlD
+
 # Convert formats
 util convert color "#ff0000" rgb        # rgb(255, 0, 0)
 util convert base dec 255 bin           # 11111111
@@ -162,6 +169,12 @@ util encode qr "https://yourapp.com/share/$(util token hex 16)"  # QR code with 
 util encode base64 decode "$ENCODED_DATA"
 util encode url decode "$URL_PARAM"
 
+# Fun text transformations
+echo "Make it 1337: $(util case leet 'hello hacker')"
+echo "Upside down: $(util case upside-down 'wow')"
+echo "Spooky text: $(util case zalgo 'boo')"
+echo "$(util case mock 'oh really')"  # Mock someone
+
 # Create test data
 for i in {1..10}; do
   echo "$(util uuid),$(util lorem words --count 2),$(util random int --min 18 --max 80)"
@@ -197,6 +210,7 @@ cliutils/
 │   └── commands/            # Command modules
 │       ├── base64.py
 │       ├── case.py
+│       ├── case_data.py     # Text transformation mappings
 │       ├── completion.py
 │       ├── convert/         # Modular conversion commands
 │       │   ├── base.py      # Number base conversions
@@ -215,7 +229,7 @@ cliutils/
 │       ├── token.py
 │       ├── uuid.py
 │       └── validate.py
-└── tests/                   # Test suite (389 tests)
+└── tests/                   # Test suite (402 tests)
 ```
 
 ## Requirements
