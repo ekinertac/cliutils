@@ -131,12 +131,6 @@ echo "Password: $PASSWORD"
 # Generate API keys
 export API_KEY=$(util token hex --bytes 32)
 
-# Convert variable names
-VAR_NAME="user profile data"
-echo "camelCase: $(util case camel "$VAR_NAME")"      # userProfileData
-echo "snake_case: $(util case snake "$VAR_NAME")"     # user_profile_data
-echo "CONSTANT: $(util case constant "$VAR_NAME")"    # USER_PROFILE_DATA
-
 # Convert config formats
 util convert config package.json yaml > package.yaml
 util convert config docker-compose.yml toml > config.toml
