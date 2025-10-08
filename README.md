@@ -23,6 +23,7 @@ activate-global-python-argcomplete
 - **encode** - Encode/decode text (URL, HTML, base64, hex, morse, QR codes, binary, ROT13, and more)
 - **hash** - Cryptographic hash digests (MD5, SHA1, SHA224, SHA256, SHA384, SHA512)
 - **lorem** - Generate Lorem Ipsum text
+- **perm** - Unix/Linux file permission conversions and calculations
 - **random** - Generate random data (integers, floats, strings, etc.)
 - **token** - Generate secure tokens and passwords
 - **uuid** - Generate UUIDs (v1, v3, v4, v5)
@@ -67,6 +68,14 @@ util encode hex encode "test"           # 74657374
 util encode morse encode "SOS"          # ... --- ...
 util encode rot13 "Hello"               # Uryyb
 util encode qr "https://example.com"    # QR code in terminal!
+
+# File permissions (auto-detects format!)
+util perm convert 755                   # rwxr-xr-x
+util perm convert rwxr-xr-x             # 755
+util perm convert 755 --to binary       # Binary representation
+util perm explain 644                   # Detailed explanation
+util perm calc add 644 111              # 755 (add execute)
+util perm common                        # List common patterns
 
 # Generate hashes
 util hash sha256 "password123"
@@ -169,6 +178,12 @@ echo "Upside down: $(util case upside-down 'wow')"
 echo "Spooky text: $(util case zalgo 'boo')"
 echo "$(util case mock 'oh really')"  # Mock someone
 
+# File permission management (auto-detect format!)
+util perm convert 755                    # Quick octal → symbolic
+util perm convert rw-r--r--              # Quick symbolic → octal
+EXEC_PERM=$(util perm calc add 644 111)  # Add execute permission
+chmod "$EXEC_PERM" script.sh              # Apply it
+
 # Create test data
 for i in {1..10}; do
   echo "$(util uuid),$(util lorem words --count 2),$(util random int --min 18 --max 80)"
@@ -219,11 +234,12 @@ cliutils/
 │       ├── encode.py
 │       ├── hash.py
 │       ├── lorem.py
+│       ├── perm.py
 │       ├── random.py
 │       ├── token.py
 │       ├── uuid.py
 │       └── validate.py
-└── tests/                   # Test suite (402 tests)
+└── tests/                   # Test suite (439 tests)
 ```
 
 ## Requirements
